@@ -1,3 +1,7 @@
+import data.BinarySearchTree;
+import model.Player;
+import ui.TreeVisualizer;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -32,7 +36,7 @@ public class Main {
                     [4] - Exibir em ordem
                     
                     [0] - Sair
-                    Escolha: 
+                    Escolha:
                     """);
 
             String choice = reader.readLine();

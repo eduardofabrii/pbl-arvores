@@ -1,3 +1,9 @@
+package ui;
+
+import data.ArrayList;
+import data.BinarySearchTree;
+import model.Node;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -61,37 +67,37 @@ public class TreeVisualizer extends JFrame {
         SwingUtilities.invokeLater(() -> {
             JViewport viewport = scrollPane.getViewport();
             Dimension viewSize = viewport.getExtentSize();
-            int scrollX = Math.max(0, (int) target.renderX - viewSize.width / 2);
-            int scrollY = Math.max(0, (int) target.renderY - viewSize.height / 2);
+            int scrollX = Math.max(0, (int) target.getRenderX() - viewSize.width / 2);
+            int scrollY = Math.max(0, (int) target.getRenderY() - viewSize.height / 2);
             viewport.setViewPosition(new Point(scrollX, scrollY));
         });
     }
 
     private void assignPositions(Node node, int[] counter, int depth) {
         if (node == null) return;
-        assignPositions(node.left, counter, depth + 1);
-        node.renderX = counter[0] * H_GAP + MARGIN;
-        node.renderY = depth * V_GAP + MARGIN;
+        assignPositions(node.getLeft(), counter, depth + 1);
+        node.setRenderX(counter[0] * H_GAP + MARGIN);
+        node.setRenderY(depth * V_GAP + MARGIN);
         counter[0]++;
-        assignPositions(node.right, counter, depth + 1);
+        assignPositions(node.getRight(), counter, depth + 1);
     }
 
     private Node findNode(Node current, String name) {
         if (current == null) return null;
-        if (current.player.getNickname().equals(name)) return current;
-        Node left = findNode(current.left, name);
+        if (current.getPlayer().getNickname().equals(name)) return current;
+        Node left = findNode(current.getLeft(), name);
         if (left != null) return left;
-        return findNode(current.right, name);
+        return findNode(current.getRight(), name);
     }
 
     private int countNodes(Node node) {
         if (node == null) return 0;
-        return 1 + countNodes(node.left) + countNodes(node.right);
+        return 1 + countNodes(node.getLeft()) + countNodes(node.getRight());
     }
 
     private int treeHeight(Node node) {
         if (node == null) return 0;
-        return 1 + Math.max(treeHeight(node.left), treeHeight(node.right));
+        return 1 + Math.max(treeHeight(node.getLeft()), treeHeight(node.getRight()));
     }
 
     private class TreePanel extends JPanel {
@@ -119,26 +125,26 @@ public class TreeVisualizer extends JFrame {
             if (node == null) return;
             g2.setColor(new Color(68, 68, 68));
             g2.setStroke(new BasicStroke(1.5f));
-            if (node.left != null) {
-                g2.drawLine((int) node.renderX, (int) node.renderY,
-                        (int) node.left.renderX, (int) node.left.renderY);
-                drawEdges(g2, node.left, path);
+            if (node.getLeft() != null) {
+                g2.drawLine((int) node.getRenderX(), (int) node.getRenderY(),
+                        (int) node.getLeft().getRenderX(), (int) node.getLeft().getRenderY());
+                drawEdges(g2, node.getLeft(), path);
             }
-            if (node.right != null) {
-                g2.drawLine((int) node.renderX, (int) node.renderY,
-                        (int) node.right.renderX, (int) node.right.renderY);
-                drawEdges(g2, node.right, path);
+            if (node.getRight() != null) {
+                g2.drawLine((int) node.getRenderX(), (int) node.getRenderY(),
+                        (int) node.getRight().getRenderX(), (int) node.getRight().getRenderY());
+                drawEdges(g2, node.getRight(), path);
             }
         }
 
         private void drawNodes(Graphics2D g2, Node node, ArrayList<Node> path) {
             if (node == null) return;
 
-            int x = (int) node.renderX;
-            int y = (int) node.renderY;
+            int x = (int) node.getRenderX();
+            int y = (int) node.getRenderY();
 
             boolean isTarget = targetNickname != null
-                    && node.player.getNickname().equals(targetNickname);
+                    && node.getPlayer().getNickname().equals(targetNickname);
             boolean isAncestor = !isTarget && isInPath(path, node);
 
             Color fill, border;
@@ -166,9 +172,9 @@ public class TreeVisualizer extends JFrame {
 
             g2.setColor(Color.WHITE);
 
-            String name = node.player.getNickname();
+            String name = node.getPlayer().getNickname();
             if (name.length() > 11) name = name.substring(0, 10) + ".";
-            String rank = "#" + node.player.getRanking();
+            String rank = "#" + node.getPlayer().getRanking();
 
             g2.setFont(new Font("SansSerif", Font.PLAIN, 9));
             FontMetrics fm = g2.getFontMetrics();
@@ -178,8 +184,8 @@ public class TreeVisualizer extends JFrame {
             fm = g2.getFontMetrics();
             g2.drawString(rank, x - fm.stringWidth(rank) / 2, y + 10);
 
-            drawNodes(g2, node.left, path);
-            drawNodes(g2, node.right, path);
+            drawNodes(g2, node.getLeft(), path);
+            drawNodes(g2, node.getRight(), path);
         }
 
         private boolean isInPath(ArrayList<Node> path, Node node) {

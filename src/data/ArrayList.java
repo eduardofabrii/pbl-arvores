@@ -1,3 +1,5 @@
+package data;
+
 public class ArrayList<T> {
     private Object[] elements;
     private int size;

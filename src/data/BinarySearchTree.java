@@ -1,3 +1,8 @@
+package data;
+
+import model.Node;
+import model.Player;
+
 public class BinarySearchTree {
     private Node root;
 
@@ -26,7 +31,7 @@ public class BinarySearchTree {
         if (found == null) {
             return null;
         }
-        Player player = found.player;
+        Player player = found.getPlayer();
         int removedRanking = player.getRanking();
         root = remove(root, name);
         decrementRankingsAfter(root, removedRanking);
@@ -48,10 +53,10 @@ public class BinarySearchTree {
         if (current == null) {
             return new Node(player);
         }
-        if (player.getRanking() < current.player.getRanking()) {
-            current.left = insert(current.left, player);
-        } else if (player.getRanking() > current.player.getRanking()) {
-            current.right = insert(current.right, player);
+        if (player.getRanking() < current.getPlayer().getRanking()) {
+            current.setLeft(insert(current.getLeft(), player));
+        } else if (player.getRanking() > current.getPlayer().getRanking()) {
+            current.setRight(insert(current.getRight(), player));
         }
         return current;
     }
@@ -60,52 +65,52 @@ public class BinarySearchTree {
         if (current == null) {
             return null;
         }
-        if (current.player.getNickname().equals(name)) {
+        if (current.getPlayer().getNickname().equals(name)) {
             return current;
         }
-        Node leftResult = search(current.left, name);
+        Node leftResult = search(current.getLeft(), name);
         if (leftResult != null) {
             return leftResult;
         }
-        return search(current.right, name);
+        return search(current.getRight(), name);
     }
 
     private Node remove(Node current, String name) {
         if (current == null) {
             return null;
         }
-        if (current.player.getNickname().equals(name)) {
-            if (current.left == null && current.right == null) {
+        if (current.getPlayer().getNickname().equals(name)) {
+            if (current.getLeft() == null && current.getRight() == null) {
                 return null;
             }
-            if (current.left == null) {
-                return current.right;
+            if (current.getLeft() == null) {
+                return current.getRight();
             }
-            if (current.right == null) {
-                return current.left;
+            if (current.getRight() == null) {
+                return current.getLeft();
             }
-            Node successor = findMin(current.right);
-            current.player = successor.player;
-            current.right = removeMin(current.right);
+            Node successor = findMin(current.getRight());
+            current.setPlayer(successor.getPlayer());
+            current.setRight(removeMin(current.getRight()));
             return current;
         }
-        current.left = remove(current.left, name);
-        current.right = remove(current.right, name);
+        current.setLeft(remove(current.getLeft(), name));
+        current.setRight(remove(current.getRight(), name));
         return current;
     }
 
     private Node findMin(Node node) {
-        if (node.left == null) {
+        if (node.getLeft() == null) {
             return node;
         }
-        return findMin(node.left);
+        return findMin(node.getLeft());
     }
 
     private Node removeMin(Node node) {
-        if (node.left == null) {
-            return node.right;
+        if (node.getLeft() == null) {
+            return node.getRight();
         }
-        node.left = removeMin(node.left);
+        node.setLeft(removeMin(node.getLeft()));
         return node;
     }
 
@@ -113,24 +118,24 @@ public class BinarySearchTree {
         if (current == null) {
             return null;
         }
-        if (current.player.getRanking() == ranking) {
+        if (current.getPlayer().getRanking() == ranking) {
             return current;
         }
-        if (ranking < current.player.getRanking()) {
-            return searchByRanking(current.left, ranking);
+        if (ranking < current.getPlayer().getRanking()) {
+            return searchByRanking(current.getLeft(), ranking);
         }
-        return searchByRanking(current.right, ranking);
+        return searchByRanking(current.getRight(), ranking);
     }
 
     private void decrementRankingsAfter(Node current, int removedRanking) {
         if (current == null) {
             return;
         }
-        if (current.player.getRanking() > removedRanking) {
-            current.player.setRanking(current.player.getRanking() - 1);
+        if (current.getPlayer().getRanking() > removedRanking) {
+            current.getPlayer().setRanking(current.getPlayer().getRanking() - 1);
         }
-        decrementRankingsAfter(current.left, removedRanking);
-        decrementRankingsAfter(current.right, removedRanking);
+        decrementRankingsAfter(current.getLeft(), removedRanking);
+        decrementRankingsAfter(current.getRight(), removedRanking);
     }
 
     private boolean findPath(Node current, String name, ArrayList<Node> path) {
@@ -138,13 +143,13 @@ public class BinarySearchTree {
             return false;
         }
         path.add(current);
-        if (current.player.getNickname().equals(name)) {
+        if (current.getPlayer().getNickname().equals(name)) {
             return true;
         }
-        if (findPath(current.left, name, path)) {
+        if (findPath(current.getLeft(), name, path)) {
             return true;
         }
-        if (findPath(current.right, name, path)) {
+        if (findPath(current.getRight(), name, path)) {
             return true;
         }
         path.remove(path.size() - 1);
@@ -155,8 +160,8 @@ public class BinarySearchTree {
         if (current == null) {
             return;
         }
-        inOrder(current.left);
-        System.out.print(current.player + " ");
-        inOrder(current.right);
+        inOrder(current.getLeft());
+        System.out.print(current.getPlayer() + " ");
+        inOrder(current.getRight());
     }
 }
